@@ -10,13 +10,19 @@ export default function RegistrationPage() {
         email: "",
         password: "",
         phoneNumber: "",
+        role: "CLIENT",
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const router = useRouter();
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+            ...(name === "role" && value === "COMPANY" ? { surname: "" } : {}),
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -41,6 +47,17 @@ export default function RegistrationPage() {
                 <h2 className="text-2xl font-bold mb-2">Register</h2>
                 {error && <div className="text-red-500">{error}</div>}
                 {success && <div className="text-green-600">{success}</div>}
+
+                <select
+                    name="role"
+                    onChange={handleChange}
+                    value={form.role}
+                    className="w-full border p-2 rounded"
+                >
+                    <option value="CLIENT">Client</option>
+                    <option value="COMPANY">Company</option>
+                </select>
+
                 <input
                     name="name"
                     placeholder="Name"
@@ -49,14 +66,18 @@ export default function RegistrationPage() {
                     className="w-full border p-2 rounded"
                     required
                 />
-                <input
-                    name="surname"
-                    placeholder="Surname"
-                    onChange={handleChange}
-                    value={form.surname}
-                    className="w-full border p-2 rounded"
-                    required
-                />
+
+                {form.role === "CLIENT" && (
+                    <input
+                        name="surname"
+                        placeholder="Surname"
+                        onChange={handleChange}
+                        value={form.surname}
+                        className="w-full border p-2 rounded"
+                        required
+                    />
+                )}
+
                 <input
                     name="email"
                     type="email"
