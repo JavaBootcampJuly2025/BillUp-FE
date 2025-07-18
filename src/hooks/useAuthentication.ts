@@ -11,32 +11,16 @@ import {
     LOGOUT_API_URL,
     REGISTER_API_URL,
 } from "@/utils/apiConstants";
-import { AuthContextType } from "../context/types";
+import { AuthContextType } from "@/context/types";
 
 export const useAuthentication = () => {
     const context = useContext(AuthContext);
 
     if (!context) {
-        return {
-            login: async (data: LoginFormInputs) => {
-                console.log("Mock login called with", data);
-                return true; // просто успешный ответ
-            },
-            logout: async () => {
-                console.log("Mock logout called");
-                return true;
-            },
-            registerUser: async (data: RegistrationForm) => {
-                console.log("Mock registerUser called with", data);
-                return true;
-            },
-            isLoggedIn: false,
-            accessToken: null,
-            userID: null,
-        };
+        throw new Error("useAuthentication must be used within AuthProvider");
     }
 
-    const { accessToken, isLoggedIn, setAccessToken, setAuthData, userID } = context as AuthContextType;
+    const { accessToken, isLoggedIn, setAccessToken, setAuthData, userID } = context;
 
     const login = async (data: LoginFormInputs): Promise<boolean> => {
         const response: Response = await fetch(LOGIN_API_URL, {
@@ -81,23 +65,21 @@ export const useAuthentication = () => {
     };
 
     const registerUser = async (data: RegistrationForm): Promise<boolean> => {
-        try {
-            const response: Response = await fetch(REGISTER_API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
+        const response = await fetch(REGISTER_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
 
-            if (!response.ok) {
-                const errorResponse: ErrorResponse = await response.json();
-                throw new Error(`Registration failed. ${errorResponse.detail}`);
-            }
-
-            return true;
-        } catch (error) {
-            throw new Error(error instanceof Error ? error.message : "Unknown error");
+        if (!response.ok) {
+            const errorResponse: ErrorResponse = await response.json();
+            throw new Error(`Registration failed. ${errorResponse.detail}`);
         }
+
+        return true;
     };
+
+
 
     return {
         login,

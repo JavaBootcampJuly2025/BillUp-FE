@@ -1,19 +1,22 @@
+export interface ResidenceRequest {
+    streetAddress: string;
+    flatNumber: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    residenceType: "HOUSE" | "FLAT";
+    isPrimary: boolean;
+}
+
 export interface RegistrationForm {
     name: string;
     surname: string;
-    password: string;
-    residency: string;
     email: string;
+    password: string;
     phoneNumber: string;
     role: 'CLIENT' | 'COMPANY';
+    residenceRequest?: ResidenceRequest;
 }
 
-export interface RegisterSuccessResponseType {
-    name: string;
-    surname: string;
-    email: string;
-    residency: string;
-    createdAt: string;
-    updatedAt: string;
-    role: 'CLIENT' | 'COMPANY';
+export class RegisterFormData {
 }

@@ -3,26 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthentication } from "@/hooks/useAuthentication";
+import {RegistrationForm, ResidenceRequest} from "@/app/registration/types";
 
-interface ResidenceRequest {
-    streetAddress: string;
-    flatNumber: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    residenceType: "HOUSE" | "FLAT";
-    isPrimary: boolean;
-}
-
-interface RegistrationForm {
-    name: string;
-    surname: string;
-    email: string;
-    password: string;
-    phoneNumber: string;
-    role: "CLIENT" | "COMPANY";
-    residenceRequest?: ResidenceRequest;
-}
 
 export default function RegistrationPage() {
     const [form, setForm] = useState<RegistrationForm>({
@@ -47,7 +29,6 @@ export default function RegistrationPage() {
     const [success, setSuccess] = useState("");
     const router = useRouter();
 
-    // Вытаскиваем registerUser из useAuthentication хука
     const { registerUser } = useAuthentication();
 
     const handleChange = (
