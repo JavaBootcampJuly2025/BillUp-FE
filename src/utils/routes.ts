@@ -1,3 +1,3 @@
-export const HOME_PAGE : string = "/";
-export const LOGIN_PAGE : string = "/login";
-export const REGISTER_PAGE : string = "/register";
+export const HOME_PATH : string = "/";
+export const LOGIN_PATH : string = "/login";
+export const REGISTER_PATH : string = "/register";
