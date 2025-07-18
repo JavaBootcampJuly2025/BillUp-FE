@@ -1,9 +1,8 @@
-export interface RegisterFormData {
+export interface RegistrationForm {
     name: string;
     surname: string;
     password: string;
     residency: string;
-    repeatedPassword: string;
     email: string;
     phoneNumber: string;
     role: 'CLIENT' | 'COMPANY';

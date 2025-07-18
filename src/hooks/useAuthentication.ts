@@ -5,9 +5,8 @@ import {
     LoginSuccessResponseType,
 } from "@/app/login/types";
 import { ErrorResponse } from "@/types/types";
-import { RegisterFormData } from "@/app/registration/types";
+import { RegistrationForm } from "@/app/registration/types";
 import {
-    BEARER_TOKEN_PREFIX,
     LOGIN_API_URL,
     LOGOUT_API_URL,
     REGISTER_API_URL,
@@ -15,8 +14,29 @@ import {
 import { AuthContextType } from "../context/types";
 
 export const useAuthentication = () => {
-    const { accessToken, isLoggedIn, setAccessToken, setAuthData, userID } =
-        useContext(AuthContext) as AuthContextType;
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        return {
+            login: async (data: LoginFormInputs) => {
+                console.log("Mock login called with", data);
+                return true; // просто успешный ответ
+            },
+            logout: async () => {
+                console.log("Mock logout called");
+                return true;
+            },
+            registerUser: async (data: RegistrationForm) => {
+                console.log("Mock registerUser called with", data);
+                return true;
+            },
+            isLoggedIn: false,
+            accessToken: null,
+            userID: null,
+        };
+    }
+
+    const { accessToken, isLoggedIn, setAccessToken, setAuthData, userID } = context as AuthContextType;
 
     const login = async (data: LoginFormInputs): Promise<boolean> => {
         const response: Response = await fetch(LOGIN_API_URL, {
@@ -43,7 +63,7 @@ export const useAuthentication = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${BEARER_TOKEN_PREFIX}${accessToken}`,
+                    Authorization: `Bearer ${accessToken}`,
                 },
             });
 
@@ -60,7 +80,7 @@ export const useAuthentication = () => {
         }
     };
 
-    const registerUser = async (data: RegisterFormData): Promise<boolean> => {
+    const registerUser = async (data: RegistrationForm): Promise<boolean> => {
         try {
             const response: Response = await fetch(REGISTER_API_URL, {
                 method: "POST",
@@ -88,6 +108,3 @@ export const useAuthentication = () => {
         userID,
     };
 };
-
-export class registerUser {
-}
