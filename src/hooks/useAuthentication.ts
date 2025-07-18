@@ -1,17 +1,17 @@
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import {
     LoginFormInputs,
     LoginSuccessResponseType,
-} from "../../pages/LoginPage/types";
-import { ErrorResponse } from "../types/types";
-import { RegisterFormData } from "../../pages/Register/types";
+} from "@/app/login/types";
+import { ErrorResponse } from "@/types/types";
+import { RegisterFormData } from "@/app/registration/types";
 import {
     BEARER_TOKEN_PREFIX,
     LOGIN_API_URL,
     LOGOUT_API_URL,
     REGISTER_API_URL,
-} from "../constants/apiConstants";
+} from "@/utils/apiConstants";
 import { AuthContextType } from "../context/types";
 
 export const useAuthentication = () => {
@@ -88,3 +88,6 @@ export const useAuthentication = () => {
         userID,
     };
 };
+
+export class registerUser {
+}

@@ -1,63 +1,137 @@
 "use client";
-import { useState } from "react";
-import { loginUser } from "@/utils/api";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import {
+    Container,
+    CssBaseline,
+    Box,
+    Typography,
+    TextField,
+    Button,
+} from "@mui/material";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { LoginFormInputs } from "./types";
+import { validationSchema } from "./validation";
+import {
+    MainBoxStyles,
+    ButtonStyles,
+    ErrorFieldStyles,
+    ContainerStyles,
+} from "./styles";
+import { useAuthentication } from "../../shared/hooks/useAuthentication";
+import LoadingProgress from "../../components/LoadingProgress/LoadingProgress";
+import { HOME_PATH } from "../../shared/constants/routes";
+import { useErrorHandler } from "../../shared/hooks/useErrorHandler";
+import { BackgroundBox } from "../../components/BackgroundBox/BackgroundBox";
+import { REGISTER_PATH } from "../../shared/constants/routes";
 
-export default function LoginPage() {
-    const [form, setForm] = useState({ email: "", password: "" });
-    const [error, setError] = useState("");
-    const router = useRouter();
+export const LoginPage: React.FC = () => {
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+    const navigate: NavigateFunction = useNavigate();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
+    const { error, handleError, clearError } = useErrorHandler();
+
+    const { login } = useAuthentication();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(validationSchema),
+    });
+
+    const handleLogin = async (data: LoginFormInputs) => {
+        setLoading(true);
         try {
-            const data = await loginUser(form);
-            // Save JWT to localStorage (or cookie for more security)
-            localStorage.setItem("access_token", data.access_token);
-            router.push("/");
-        } catch (err: any) {
-            setError("Invalid email or password");
+            const success: boolean = await login(data);
+            if (success) navigate(HOME_PATH);
+        } catch (error: unknown) {
+            handleError(error);
+            setTimeout(() => {
+                clearError();
+            }, 4000);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50">
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md space-y-4"
-            >
-                <h2 className="text-2xl font-bold mb-2">Login</h2>
-                {error && <div className="text-red-500">{error}</div>}
-                <input
-                    name="email"
-                    type="email"
-                    placeholder="Email"
-                    onChange={handleChange}
-                    value={form.email}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-                <input
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                    value={form.password}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-                >
-                    Login
-                </button>
-            </form>
-        </div>
+        <>
+            <Container maxWidth="md" sx={ContainerStyles}>
+                <CssBaseline />
+                <Box sx={MainBoxStyles}>
+                    <Typography variant="h4" textAlign="center" fontSize={"40px"}>
+                        Welcome to Mars-terpiece
+                    </Typography>
+                    <Typography component="p">
+                        {" "}
+                        Sign in with your email address
+                    </Typography>
+                    <Box
+                        sx={{ mt: 1 }}
+                        component="form"
+                        onSubmit={handleSubmit(handleLogin)}
+                    >
+                        <TextField
+                            margin="normal"
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            placeholder="e.g., name@marsterpiece.com"
+                            autoFocus
+                            {...register("email")}
+                            error={Boolean(errors.email)}
+                            helperText={errors.email?.message}
+                        />
+
+                        <TextField
+                            margin="normal"
+                            fullWidth
+                            id="password"
+                            label="Password"
+                            type="password"
+                            {...register("password")}
+                            error={Boolean(errors.password)}
+                            helperText={errors.password?.message}
+                        />
+                        {error && <Typography sx={ErrorFieldStyles}>{error}</Typography>}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: 1,
+                            }}
+                        >
+                            <Link to={REGISTER_PATH} style={{ color: "gray" }}>
+                                Don&apos;t have an account?
+                            </Link>
+                        </Box>
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            fullWidth
+                            variant="contained"
+                            sx={ButtonStyles}
+                        >
+                            {loading ? (
+                                <LoadingProgress
+                                    text="Signing In..."
+                                    spinnerColor="#A8A8A8"
+                                    size="20px"
+                                    fontSize="14px"
+                                />
+                            ) : (
+                                "Sign In"
+                            )}
+                        </Button>
+                    </Box>
+                </Box>
+                <BackgroundBox />
+            </Container>
+        </>
     );
-}
+};

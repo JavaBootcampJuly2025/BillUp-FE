@@ -1,110 +1,40 @@
 "use client";
-
 import { useState } from "react";
+import {registerUser, useAuthentication} from "@/hooks/useAuthentication";
 import { useRouter } from "next/navigation";
-import { registerUser } from "@/utils/api";
-
-interface ResidenceRequest {
-    streetAddress: string;
-    flatNumber: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    residenceType: "HOUSE" | "FLAT";
-    isPrimary: boolean;
-}
-
-interface RegistrationForm {
-    name: string;
-    surname: string;
-    email: string;
-    password: string;
-    phoneNumber: string;
-    role: "CLIENT" | "COMPANY";
-    residenceRequest?: ResidenceRequest;
-}
 
 export default function RegistrationPage() {
-    const [form, setForm] = useState<RegistrationForm>({
+    const [form, setForm] = useState({
         name: "",
         surname: "",
         email: "",
         password: "",
         phoneNumber: "",
         role: "CLIENT",
-        residenceRequest: {
-            streetAddress: "",
-            flatNumber: "",
-            city: "",
-            postalCode: "",
-            country: "",
-            residenceType: "HOUSE",
-            isPrimary: true,
-        },
     });
-
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const router = useRouter();
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
+    const { registerUser } = useAuthentication();
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-
-        if (name.startsWith("residence_")) {
-            const key = name.replace("residence_", "") as keyof ResidenceRequest;
-
-            setForm((prev) => ({
-                ...prev,
-                residenceRequest: {
-                    ...(prev.residenceRequest || {
-                        streetAddress: "",
-                        flatNumber: "",
-                        city: "",
-                        postalCode: "",
-                        country: "",
-                        residenceType: "HOUSE",
-                        isPrimary: true,
-                    }),
-                    [key]: value,
-                },
-            }));
-        } else {
-            const isRoleChangeToCompany = name === "role" && value === "COMPANY";
-            const isRoleChangeToClient = name === "role" && value === "CLIENT";
-
-            setForm((prev) => ({
-                ...prev,
-                [name]: value,
-                ...(isRoleChangeToCompany
-                    ? { surname: "", residenceRequest: undefined }
-                    : isRoleChangeToClient && !prev.residenceRequest
-                        ? {
-                            residenceRequest: {
-                                streetAddress: "",
-                                flatNumber: "",
-                                city: "",
-                                postalCode: "",
-                                country: "",
-                                residenceType: "HOUSE",
-                                isPrimary: true,
-                            },
-                        }
-                        : {}),
-            }));
-        }
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+            ...(name === "role" && value === "COMPANY" ? { surname: "" } : {}),
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
         setSuccess("");
-
         try {
             await registerUser(form);
             setSuccess("Registration successful! Redirecting...");
-            setTimeout(() => router.push("/login"), 1500);
+            setTimeout(() => router.push("/login"), 1200);
         } catch (err: any) {
             setError(err.message || "Registration failed");
         }
@@ -167,7 +97,7 @@ export default function RegistrationPage() {
                     value={form.password}
                     className="w-full border p-2 rounded"
                     required
-                    minLength={6}
+                    minLength={8}
                 />
                 <input
                     name="phoneNumber"
@@ -177,64 +107,6 @@ export default function RegistrationPage() {
                     className="w-full border p-2 rounded"
                     required
                 />
-
-                {/* Residence section only for CLIENT */}
-                {form.role === "CLIENT" && form.residenceRequest && (
-                    <>
-                        <hr />
-                        <h3 className="text-lg font-semibold">Residence Info</h3>
-
-                        <input
-                            name="residence_streetAddress"
-                            placeholder="Street Address"
-                            onChange={handleChange}
-                            value={form.residenceRequest.streetAddress}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                        <input
-                            name="residence_flatNumber"
-                            placeholder="Flat Number (optional)"
-                            onChange={handleChange}
-                            value={form.residenceRequest.flatNumber}
-                            className="w-full border p-2 rounded"
-                        />
-                        <input
-                            name="residence_city"
-                            placeholder="City"
-                            onChange={handleChange}
-                            value={form.residenceRequest.city}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                        <input
-                            name="residence_postalCode"
-                            placeholder="Postal Code"
-                            onChange={handleChange}
-                            value={form.residenceRequest.postalCode}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                        <input
-                            name="residence_country"
-                            placeholder="Country"
-                            onChange={handleChange}
-                            value={form.residenceRequest.country}
-                            className="w-full border p-2 rounded"
-                            required
-                        />
-                        <select
-                            name="residence_residenceType"
-                            value={form.residenceRequest.residenceType}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded"
-                        >
-                            <option value="HOUSE">House</option>
-                            <option value="FLAT">Flat</option>
-                        </select>
-                    </>
-                )}
-
                 <button
                     type="submit"
                     className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
