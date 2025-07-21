@@ -1,5 +1,6 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+
+import React, { useState } from 'react';
 import {
     Container,
     CssBaseline,
@@ -7,49 +8,46 @@ import {
     Typography,
     TextField,
     Button,
-} from "@mui/material";
-import { Link, NavigateFunction, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { LoginFormInputs } from "./types";
-import { validationSchema } from "./validation";
+} from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { LoginFormInputs } from './types';
+import { validationSchema } from './validation';
 import {
     MainBoxStyles,
     ButtonStyles,
     ErrorFieldStyles,
     ContainerStyles,
-} from "./styles";
-import { useAuthentication } from "../../shared/hooks/useAuthentication";
-import LoadingProgress from "../../components/LoadingProgress/LoadingProgress";
-import { HOME_PATH } from "../../shared/constants/routes";
-import { useErrorHandler } from "../../shared/hooks/useErrorHandler";
-import { BackgroundBox } from "../../components/BackgroundBox/BackgroundBox";
-import { REGISTER_PATH } from "../../shared/constants/routes";
+} from './styles';
+import { useAuthentication } from '@/hooks/useAuthentication';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import LoadingProgress from '@/components/LoadingProgress/LoadingProgress';
+import { BackgroundBox } from '@/components/BackgroundBox/BackgroundBox';
+import { HOME_PATH, REGISTER_PATH } from '@/utils/routes';
+import Link from 'next/link';
 
-export const LoginPage: React.FC = () => {
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const navigate: NavigateFunction = useNavigate();
-
-    const { error, handleError, clearError } = useErrorHandler();
-
+const LoginPage: React.FC = () => {
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
     const { login } = useAuthentication();
+    const { error, handleError, clearError } = useErrorHandler();
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm({
+    } = useForm<LoginFormInputs>({
         resolver: yupResolver(validationSchema),
     });
 
     const handleLogin = async (data: LoginFormInputs) => {
         setLoading(true);
         try {
-            const success: boolean = await login(data);
-            if (success) navigate(HOME_PATH);
-        } catch (error: unknown) {
-            handleError(error);
+            const success = await login(data);
+            if (success) router.push(HOME_PATH);
+        } catch (err: unknown) {
+            handleError(err);
             setTimeout(() => {
                 clearError();
             }, 4000);
@@ -59,79 +57,69 @@ export const LoginPage: React.FC = () => {
     };
 
     return (
-        <>
-            <Container maxWidth="md" sx={ContainerStyles}>
-                <CssBaseline />
-                <Box sx={MainBoxStyles}>
-                    <Typography variant="h4" textAlign="center" fontSize={"40px"}>
-                        Welcome to BillUp
-                    </Typography>
-                    <Typography component="p">
-                        {" "}
-                        Sign in with your email address
-                    </Typography>
-                    <Box
-                        sx={{ mt: 1 }}
-                        component="form"
-                        onSubmit={handleSubmit(handleLogin)}
-                    >
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            placeholder="e.g., name@marsterpiece.com"
-                            autoFocus
-                            {...register("email")}
-                            error={Boolean(errors.email)}
-                            helperText={errors.email?.message}
-                        />
+        <Container maxWidth="md" sx={ContainerStyles}>
+            <CssBaseline />
+            <Box sx={MainBoxStyles}>
+                <Typography variant="h4" textAlign="center" fontSize="40px">
+                    Welcome to Mars-terpiece
+                </Typography>
+                <Typography component="p" textAlign="center" sx={{ mb: 2 }}>
+                    Sign in with your email address
+                </Typography>
 
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            id="password"
-                            label="Password"
-                            type="password"
-                            {...register("password")}
-                            error={Boolean(errors.password)}
-                            helperText={errors.password?.message}
-                        />
-                        {error && <Typography sx={ErrorFieldStyles}>{error}</Typography>}
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                gap: 1,
-                            }}
-                        >
-                            <Link to={REGISTER_PATH} style={{ color: "gray" }}>
-                                Don&apos;t have an account?
-                            </Link>
-                        </Box>
-                        <Button
-                            type="submit"
-                            disabled={loading}
-                            fullWidth
-                            variant="contained"
-                            sx={ButtonStyles}
-                        >
-                            {loading ? (
-                                <LoadingProgress
-                                    text="Signing In..."
-                                    spinnerColor="#A8A8A8"
-                                    size="20px"
-                                    fontSize="14px"
-                                />
-                            ) : (
-                                "Sign In"
-                            )}
-                        </Button>
+                <Box component="form" onSubmit={handleSubmit(handleLogin)} sx={{ mt: 1 }}>
+                    <TextField
+                        fullWidth
+                        label="Email Address"
+                        placeholder="e.g., name@marsterpiece.com"
+                        margin="normal"
+                        {...register('email')}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                    />
+
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        margin="normal"
+                        {...register('password')}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                    />
+
+                    {error && <Typography sx={ErrorFieldStyles}>{error}</Typography>}
+
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 2 }}>
+                        <Typography variant="body2">Dont have an account?</Typography>
+                        <Link href={REGISTER_PATH} style={{ color: 'gray', textDecoration: 'underline' }}>
+                            Register
+                        </Link>
                     </Box>
+
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        fullWidth
+                        variant="contained"
+                        sx={ButtonStyles}
+                    >
+                        {loading ? (
+                            <LoadingProgress
+                                text="Signing In..."
+                                spinnerColor="#A8A8A8"
+                                size="20px"
+                                fontSize="14px"
+                            />
+                        ) : (
+                            'Sign In'
+                        )}
+                    </Button>
                 </Box>
-                <BackgroundBox />
-            </Container>
-        </>
+            </Box>
+            <BackgroundBox />
+        </Container>
     );
 };
+
+export default LoginPage;
