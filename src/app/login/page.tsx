@@ -61,7 +61,10 @@ const LoginPage: React.FC = () => {
             <CssBaseline />
             <Box sx={MainBoxStyles}>
                 <Typography variant="h4" textAlign="center" fontSize="40px">
-                    Welcome to Mars-terpiece
+                    Welcome to BillUp
+                </Typography>
+                <Typography variant="body2" textAlign="center" sx={{ mb: 2}}>
+                    A simplified central bill paying applications, no need to go thru different applications
                 </Typography>
                 <Typography component="p" textAlign="center" sx={{ mb: 2 }}>
                     Sign in with your email address
