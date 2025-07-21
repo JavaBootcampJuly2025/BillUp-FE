@@ -64,7 +64,7 @@ export const LoginPage: React.FC = () => {
                 <CssBaseline />
                 <Box sx={MainBoxStyles}>
                     <Typography variant="h4" textAlign="center" fontSize={"40px"}>
-                        Welcome to Mars-terpiece
+                        Welcome to BillUp
                     </Typography>
                     <Typography component="p">
                         {" "}
