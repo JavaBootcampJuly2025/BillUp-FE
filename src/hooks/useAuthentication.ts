@@ -5,18 +5,22 @@ import {
     LoginSuccessResponseType,
 } from "@/app/login/types";
 import { ErrorResponse } from "@/types/types";
-import { RegisterFormData } from "@/app/registration/types";
+import { RegistrationForm } from "@/app/registration/types";
 import {
-    BEARER_TOKEN_PREFIX,
     LOGIN_API_URL,
     LOGOUT_API_URL,
     REGISTER_API_URL,
 } from "@/utils/apiConstants";
-import { AuthContextType } from "../context/types";
+import { AuthContextType } from "@/context/types";
 
 export const useAuthentication = () => {
-    const { accessToken, isLoggedIn, setAccessToken, setAuthData, userID } =
-        useContext(AuthContext) as AuthContextType;
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error("useAuthentication must be used within AuthProvider");
+    }
+
+    const { accessToken, isLoggedIn, setAccessToken, setAuthData, userID } = context;
 
     const login = async (data: LoginFormInputs): Promise<boolean> => {
         const response: Response = await fetch(LOGIN_API_URL, {
@@ -43,7 +47,7 @@ export const useAuthentication = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${BEARER_TOKEN_PREFIX}${accessToken}`,
+                    Authorization: `Bearer ${accessToken}`,
                 },
             });
 
@@ -60,24 +64,22 @@ export const useAuthentication = () => {
         }
     };
 
-    const registerUser = async (data: RegisterFormData): Promise<boolean> => {
-        try {
-            const response: Response = await fetch(REGISTER_API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
+    const registerUser = async (data: RegistrationForm): Promise<boolean> => {
+        const response = await fetch(REGISTER_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
 
-            if (!response.ok) {
-                const errorResponse: ErrorResponse = await response.json();
-                throw new Error(`Registration failed. ${errorResponse.detail}`);
-            }
-
-            return true;
-        } catch (error) {
-            throw new Error(error instanceof Error ? error.message : "Unknown error");
+        if (!response.ok) {
+            const errorResponse: ErrorResponse = await response.json();
+            throw new Error(`Registration failed. ${errorResponse.detail}`);
         }
+
+        return true;
     };
+
+
 
     return {
         login,
@@ -88,6 +90,3 @@ export const useAuthentication = () => {
         userID,
     };
 };
-
-export class registerUser {
-}
