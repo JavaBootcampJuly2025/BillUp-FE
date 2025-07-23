@@ -24,7 +24,7 @@ import { useAuthentication } from '@/hooks/useAuthentication';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import LoadingProgress from '@/components/LoadingProgress/LoadingProgress';
 import { BackgroundBox } from '@/components/BackgroundBox/BackgroundBox';
-import { HOME_PATH, REGISTER_PATH } from '@/utils/routes';
+import {HOME_PATH, MAIN_PAGE, REGISTER_PATH} from '@/utils/routes';
 import Link from 'next/link';
 
 const LoginPage: React.FC = () => {
@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
         setLoading(true);
         try {
             const success = await login(data);
-            if (success) router.push(HOME_PATH);
+            if (success) router.push(MAIN_PAGE);
         } catch (err: unknown) {
             handleError(err);
             setTimeout(() => {
