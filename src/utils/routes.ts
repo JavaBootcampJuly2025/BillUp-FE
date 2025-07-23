@@ -8,6 +8,6 @@ export const PAYMENT_PAGE : string = "/payments";
 export const BILLS_PAGE : string = "/bills";
 export const RESIDENCIES_PAGE : string = "/residencies";
 export const HISTORY_PAGE : string = "/history";
-
+export const INVOICE_PAGE : string = "/invoice";
 
 export const PUBLIC_PATHS: string[] = [LOGIN_PATH, REGISTER_PATH, HOME_PATH];
