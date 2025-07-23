@@ -1,3 +1,4 @@
+// src/context/types.ts
 import { ReactNode } from "react";
 
 export type AuthContextType = {

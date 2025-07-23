@@ -13,16 +13,16 @@ import { AuthContext } from "@/context/AuthContext";
 import { AuthContextType } from "@/context/types";
 import {useRouter} from "next/navigation";
 
-export default function HomePage() {
+export default function MainPage() {
     const { isLoggedIn } = useContext(AuthContext) as AuthContextType;
     const router = useRouter();
 
-    // If already logged in, send them to their dashboard:
     useEffect(() => {
-        if (isLoggedIn()) {
-            router.push(MAIN_PAGE);    // or wherever your user page lives
+        if (!isLoggedIn()) {
+            router.replace(LOGIN_PATH);
         }
     }, [isLoggedIn, router]);
+    if (!isLoggedIn()) return null;
 
     // Otherwise show the public landing:
     return (

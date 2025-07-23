@@ -80,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return (
         <AuthContext.Provider
             value={{
-        isLoggedIn,
+            isLoggedIn,
             accessToken,
             setAccessToken,
             setAuthData,
