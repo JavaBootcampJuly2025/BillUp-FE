@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import {
-    Container,
     CssBaseline,
     Box,
     Typography,
     TextField,
     Button,
     Paper,
+    Alert,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -19,6 +19,8 @@ import { useAuthentication } from '@/hooks/useAuthentication';
 
 const LoginPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
+    const [authError, setAuthError] = useState<string | null>(null);
+
     const router = useRouter();
     const { login } = useAuthentication();
 
@@ -32,11 +34,20 @@ const LoginPage: React.FC = () => {
 
     const handleLogin = async (data: LoginFormInputs) => {
         setLoading(true);
+        setAuthError(null);
+
         try {
             const success = await login(data);
-            if (success) router.push('/main');
-        } catch (err) {
+            if (success) {
+                router.push('/main');
+            }
+        } catch (err: any) {
             console.error(err);
+            if (err?.detail) {
+                setAuthError(err.detail);
+            } else {
+                setAuthError('Authentication error. Try again');
+            }
         } finally {
             setLoading(false);
         }
@@ -67,7 +78,17 @@ const LoginPage: React.FC = () => {
                     Sign In
                 </Typography>
 
-                <Box component="form" onSubmit={handleSubmit(handleLogin)} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {authError && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {authError}
+                    </Alert>
+                )}
+
+                <Box
+                    component="form"
+                    onSubmit={handleSubmit(handleLogin)}
+                    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                >
                     <TextField
                         label="Email"
                         fullWidth
@@ -88,7 +109,7 @@ const LoginPage: React.FC = () => {
                         variant="contained"
                         fullWidth
                         sx={{
-                            backgroundColor: '#10b981', // green
+                            backgroundColor: '#10b981',
                             textTransform: 'none',
                             fontWeight: 'bold',
                             '&:hover': {

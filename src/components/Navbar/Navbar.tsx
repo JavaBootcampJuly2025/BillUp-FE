@@ -26,6 +26,8 @@ import { LinkStyles } from "./styles";
 import { AuthContext } from "@/context/AuthContext";
 import { AuthContextType } from "@/context/types";
 import { ROLE_CLIENT } from "@/utils/roleConstants";
+import { ROLE_COMPANY } from "@/utils/roleConstants";
+
 import { useAuthentication } from "@/hooks/useAuthentication";
 
 export default function Navbar() {

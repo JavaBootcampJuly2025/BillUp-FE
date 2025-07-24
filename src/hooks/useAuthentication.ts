@@ -31,7 +31,7 @@ export const useAuthentication = () => {
 
         if (!response.ok) {
             const errorResponse: ErrorResponse = await response.json();
-            throw new Error(JSON.stringify(errorResponse));
+            throw { detail: errorResponse.detail, status: response.status };
         }
 
         const loginResponse: LoginSuccessResponseType = await response.json();
@@ -40,6 +40,7 @@ export const useAuthentication = () => {
 
         return true;
     };
+
 
     const logout = async (): Promise<boolean> => {
         try {
@@ -72,14 +73,25 @@ export const useAuthentication = () => {
         });
 
         if (!response.ok) {
-            const errorResponse: ErrorResponse = await response.json();
-            throw new Error(`Registration failed. ${errorResponse.detail}`);
+            let errorMessage = "Registration failed.";
+
+            try {
+                const errorResponse: ErrorResponse = await response.json();
+
+                if (errorResponse?.detail) {
+                    errorMessage = `Registration failed. ${errorResponse.detail}`;
+                } else if (errorResponse?.title) {
+                    errorMessage = `Registration failed. ${errorResponse.title}`;
+                }
+            } catch (e) {
+                errorMessage = `Registration failed with status ${response.status}`;
+            }
+
+            throw new Error(errorMessage);
         }
 
         return true;
     };
-
-
 
     return {
         login,
