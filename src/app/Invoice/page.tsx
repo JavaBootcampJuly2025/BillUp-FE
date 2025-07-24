@@ -39,7 +39,6 @@ export default function InvoicePage() {
   });
 
   const onSubmit = async (data: InvoiceForm) => {
-
     setLoading(true);
     try {
      const billData: CreateBillRequest = {
@@ -52,7 +51,6 @@ export default function InvoicePage() {
       };
 
       await billApi.createBill(billData);
-      if (!res.ok) throw new Error("Failed to send invoice");
       setSuccess("Invoice sent successfully!");
       setError("");
       reset();
@@ -82,7 +80,7 @@ export default function InvoicePage() {
         <input {...register("name")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
         <p className="text-red-500 text-sm">{errors.name?.message}</p>
 
-        <label className="text-gray-700">Select Utility</label>
+        <label className="text-gray-700">Bill Type</label>
         <select {...register("type")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200">
           <option value="">Select bill type</option>
           <option value={BillType?.ELECTRICITY}>Electricity</option>
@@ -100,15 +98,15 @@ export default function InvoicePage() {
         <p className="text-red-500 text-sm">{errors.dueDate?.message}</p>
 
         <label className="text-gray-700">Amount</label>
-        <input {...register("amount")}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+        <input {...register("amount",  { valueAsNumber: true })}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
         <p className="text-red-500 text-sm">{errors.amount?.message}</p>
 
         <label className="text-gray-700">Residence ID</label>
-        <input {...register("residenceId")}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+        <input {...register("residenceId", { valueAsNumber: true })}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
         <p className="text-red-500 text-sm">{errors.residenceId?.message}</p>
 
         <label className="text-gray-700">Company ID</label>
-        <input {...register("companyId")}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+        <input {...register("companyId", { valueAsNumber: true })}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
         <p className="text-red-500 text-sm">{errors.companyId?.message}</p>
 
         <button
