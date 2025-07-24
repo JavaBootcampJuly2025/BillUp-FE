@@ -46,7 +46,6 @@ export default function MainPage() {
             </Typography>
 
 
-            {/* Optional login button if needed */}
             {!isLoggedIn() && (
                 <Button variant="contained" href={LOGIN_PATH} sx={LoginPageButtonStyles}>
                     Login
