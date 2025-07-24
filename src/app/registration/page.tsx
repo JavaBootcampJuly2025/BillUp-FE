@@ -3,8 +3,28 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthentication } from "@/hooks/useAuthentication";
-import {RegistrationForm, ResidenceRequest} from "@/app/registration/types";
+import { RegistrationForm, ResidenceRequest } from "@/app/registration/types";
 
+const mockAddresses = [
+    {
+        full: "221B Baker Street, London",
+        city: "London",
+        postalCode: "NW1 6XE",
+        country: "UK",
+    },
+    {
+        full: "1600 Amphitheatre Parkway, Mountain View",
+        city: "Mountain View",
+        postalCode: "94043",
+        country: "USA",
+    },
+    {
+        full: "10 Downing Street, London",
+        city: "London",
+        postalCode: "SW1A 2AA",
+        country: "UK",
+    },
+];
 
 export default function RegistrationPage() {
     const [form, setForm] = useState<RegistrationForm>({
@@ -28,7 +48,6 @@ export default function RegistrationPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const router = useRouter();
-
     const { registerUser } = useAuthentication();
 
     const handleChange = (
@@ -39,21 +58,46 @@ export default function RegistrationPage() {
         if (name.startsWith("residence_")) {
             const key = name.replace("residence_", "") as keyof ResidenceRequest;
 
-            setForm((prev) => ({
-                ...prev,
-                residenceRequest: {
-                    ...(prev.residenceRequest || {
-                        streetAddress: "",
-                        flatNumber: "",
-                        city: "",
-                        postalCode: "",
-                        country: "",
-                        residenceType: "HOUSE",
-                        isPrimary: true,
-                    }),
-                    [key]: value,
-                },
-            }));
+            if (key === "streetAddress") {
+                const match = mockAddresses.find((addr) => addr.full === value);
+
+                setForm((prev) => {
+                    const prevResidence = prev.residenceRequest!;
+
+                    if (match) {
+                        return {
+                            ...prev,
+                            residenceRequest: {
+                                ...prevResidence,
+                                streetAddress: value,
+                                city: match.city,
+                                postalCode: match.postalCode,
+                                country: match.country,
+                            },
+                        };
+                    }
+
+                    return {
+                        ...prev,
+                        residenceRequest: {
+                            ...prevResidence,
+                            streetAddress: value,
+                        },
+                    };
+                });
+
+                return;
+            } else {
+                setForm((prev) => ({
+                    ...prev,
+                    residenceRequest: {
+                        ...prev.residenceRequest!,
+                        [key]: value,
+                    },
+                }));
+                return;
+            }
+
         } else {
             const isRoleChangeToCompany = name === "role" && value === "COMPANY";
             const isRoleChangeToClient = name === "role" && value === "CLIENT";
@@ -168,6 +212,7 @@ export default function RegistrationPage() {
                         <h3 className="text-lg text-gray-700 font-semibold">Residence Info</h3>
 
                         <input
+                            list="address-list"
                             name="residence_streetAddress"
                             placeholder="Street Address"
                             onChange={handleChange}
@@ -175,6 +220,12 @@ export default function RegistrationPage() {
                             className="w-full border border-gray-300 p-2 rounded"
                             required
                         />
+                        <datalist id="address-list">
+                            {mockAddresses.map((addr) => (
+                                <option key={addr.full} value={addr.full} />
+                            ))}
+                        </datalist>
+
                         <input
                             name="residence_flatNumber"
                             placeholder="Flat Number (optional)"

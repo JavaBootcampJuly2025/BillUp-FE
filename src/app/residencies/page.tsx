@@ -11,6 +11,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import AddIcon from "@mui/icons-material/Add";
+import Link from "next/link"
 import { useResidences, Residency } from "@/hooks/useResidencies";
 
 export default function ResidencesPage() {
@@ -19,6 +20,7 @@ export default function ResidencesPage() {
         searchResidences,
         setPrimary,
         deactivate,
+        activate,
         cloneResidence,
     } = useResidences();
 
@@ -44,6 +46,11 @@ export default function ResidencesPage() {
         await deactivate(id);
         setHomes(h => h.map(r => r.id === id ? { ...r, active: false } : r));
     };
+
+    const onActivate = async (id: number) => {
+        await activate(id);
+        setHomes(h => h.map(r => r.id === id ? { ...r, active: true } : r));
+    }
 
     const onUseAddress = async (id: number) => {
         const newRes = await cloneResidence(id);
@@ -97,41 +104,36 @@ export default function ResidencesPage() {
                                     </Typography>
                                 )}
                             </CardContent>
-
                             <CardActions>
-                                {isSearching
-                                    ? (
-                                        // In search mode: let the user “take” this address
-                                        <Button
-                                            variant="contained"
-                                            size="small"
-                                            onClick={() => onUseAddress(r.id)}
-                                        >
-                                            Use this address
-                                        </Button>
-                                    )
-                                    : (
-                                        // In normal mode: show primary/deactivate controls
-                                        <>
-                                            {!r.primary && (
-                                                <Typography
-                                                    variant="button"
-                                                    onClick={() => onMakePrimary(r.id)}
-                                                    sx={{ cursor: "pointer", mr: 2 }}
-                                                >
-                                                    Make Primary
-                                                </Typography>
-                                            )}
-                                            <Typography
-                                                variant="button"
-                                                onClick={() => onDeactivate(r.id)}
-                                                sx={{ cursor: "pointer" }}
-                                            >
-                                                Deactivate
-                                            </Typography>
-                                        </>
-                                    )
-                                }
+                                {/* only show “Make Primary” when not already primary */}
+                                {!r.primary && !isSearching && (
+                                    <Typography
+                                        variant="button"
+                                        onClick={() => onMakePrimary(r.id)}
+                                        sx={{ cursor: "pointer", mr: 2 }}
+                                    >
+                                        Make Primary
+                                    </Typography>
+                                )}
+
+                                {/* toggle activate/deactivate */}
+                                {r.active ? (
+                                    <Typography
+                                        variant="button"
+                                        onClick={() => onDeactivate(r.id)}
+                                        sx={{ cursor: "pointer" }}
+                                    >
+                                        Deactivate
+                                    </Typography>
+                                ) : (
+                                    <Typography
+                                        variant="button"
+                                        onClick={() => onActivate(r.id)}
+                                        sx={{ cursor: "pointer" }}
+                                    >
+                                        Activate
+                                    </Typography>
+                                )}
                             </CardActions>
                         </Card>
                     </Grid>
@@ -140,6 +142,8 @@ export default function ResidencesPage() {
 
             {/* Add‑new button */}
             <Fab
+                component={Link}
+                href="/residencies/create"
                 color="primary"
                 aria-label="add"
                 sx={{ position: "fixed", bottom: 24, right: 24 }}
