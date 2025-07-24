@@ -17,8 +17,20 @@ export interface Residency {
     isSecondary: boolean;
 }
 
+export interface CreateResidenceRequest {
+    streetAddress: string;
+    flatNumber?: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    residenceType: "FLAT" | "HOUSE";
+    primary: boolean;
+    //active: boolean;
+}
+
 export function useResidences() {
     const ctx = useContext(AuthContext);
+
     if (!ctx) {
         throw new Error(
             "AuthContext is missing — make sure your tree is wrapped in <AuthContext.Provider>"
@@ -65,6 +77,21 @@ export function useResidences() {
         },
         []
     );
+    const createResidence = useCallback(
+        async (payload: CreateResidenceRequest) => {
+            const res = await fetch(RESIDENCIES_API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${BEARER_TOKEN_PREFIX}${accessToken}`,
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error("Failed to create residence");
+            return res.json();   // returns the created ResidenceResponse
+        },
+        [accessToken]
+    );
 
     /*const setSecondary = useCallback(
         async (id: number) => {
@@ -73,16 +100,25 @@ export function useResidences() {
         []
     );*/
 
-    /*const activate = useCallback(
+    const activate = useCallback(
         async (id: number) => {
-            await fetch(`${RESIDENCIES_API_URL}/${id}/activate`, {method: "PUT"})
+            await fetch(`${RESIDENCIES_API_URL}/${id}/activate`, { method: "PUT", headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${BEARER_TOKEN_PREFIX}${accessToken}`,
+                },
+            });
         },
         []
-    )*/
+    );
+
 
     const deactivate = useCallback(
         async (id: number) => {
-            await fetch(`${RESIDENCIES_API_URL}/${id}/deactivate`, { method: "PUT" });
+            await fetch(`${RESIDENCIES_API_URL}/${id}/deactivate`, { method: "PUT", headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${BEARER_TOKEN_PREFIX}${accessToken}`,
+                },
+            });
         },
         []
     );
@@ -105,5 +141,5 @@ export function useResidences() {
         [accessToken]
     );
 
-    return { getResidences, setPrimary, deactivate, searchResidences, cloneResidence };
+    return { getResidences, setPrimary, deactivate, activate, searchResidences, cloneResidence, createResidence };
 }
