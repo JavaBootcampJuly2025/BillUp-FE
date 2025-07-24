@@ -7,11 +7,11 @@ import {
     MainTextStyles,
     SubTextStyles,
 } from "./styles";
-import {LOGIN_PATH, MAIN_PAGE} from "@/utils/routes";
-import {useContext, useEffect} from "react";
+import { LOGIN_PATH } from "@/utils/routes";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { AuthContextType } from "@/context/types";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function MainPage() {
     const { isLoggedIn } = useContext(AuthContext) as AuthContextType;
@@ -22,20 +22,33 @@ export default function MainPage() {
             router.replace(LOGIN_PATH);
         }
     }, [isLoggedIn, router]);
+
     if (!isLoggedIn()) return null;
 
-    // Otherwise show the public landing:
     return (
-        <Box sx={HomePageContainerStyles}>
-            <Typography variant="h3" sx={MainTextStyles}>
-                BillUp - a central bill paying application!
+        <Box
+            sx={{
+                minHeight: "100vh",
+                backgroundImage: "linear-gradient(to right, #fef08a, #f9a8d4)", // yellow to pink
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+                padding: 2,
+            }}
+        >
+            <Typography sx={{ fontSize: "120px", fontWeight: "bold", color: "black", mb: 2 }}>
+                Hello!
             </Typography>
+            <Typography sx={{ fontSize: "64px", color: "black" }}>
+                Start managing your bills!
+            </Typography>
+
+
+            {/* Optional login button if needed */}
             {!isLoggedIn() && (
-                <Button
-                    variant="contained"
-                    href={LOGIN_PATH}
-                    sx={LoginPageButtonStyles}
-                >
+                <Button variant="contained" href={LOGIN_PATH} sx={LoginPageButtonStyles}>
                     Login
                 </Button>
             )}

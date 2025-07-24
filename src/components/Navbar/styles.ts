@@ -1,7 +1,7 @@
-import { SxProps } from "@mui/material";
+import {SxProps} from "@mui/material";
 
 export const LinkStyles: SxProps = {
-    color: "#fff",
+    color: "#000",
     textDecoration: "none",
     textTransform: "none",
     position: "relative",
@@ -14,18 +14,10 @@ export const LinkStyles: SxProps = {
         bottom: 0,
         height: "2px",
         width: "0%",
-        backgroundColor: "#fff",
+        backgroundColor: "#000",
         transition: "width 0.3s ease-in-out",
     },
     "&:hover::after": {
         width: "100%",
     },
-};
-
-export const CompanyNameStyles: SxProps = {
-    color: "#fff",
-    textDecoration: "none",
-    textTransform: "none",
-    fontWeight: 500,
-    fontSize: "1.2rem",
 };

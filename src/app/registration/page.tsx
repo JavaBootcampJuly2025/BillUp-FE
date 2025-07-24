@@ -95,20 +95,20 @@ export default function RegistrationPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-r from-green-200 to-cyan-200 flex items-center justify-center pt-10">
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md space-y-4"
+                className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-4"
             >
-                <h2 className="text-2xl font-bold mb-2">Register</h2>
-                {error && <div className="text-red-500">{error}</div>}
-                {success && <div className="text-green-600">{success}</div>}
+                <h2 className="text-3xl font-bold text-center mb-4">Register</h2>
+                {error && <div className="text-[#E95B5E]">{error}</div>}
+                {success && <div className="text-[#10b981]">{success}</div>}
 
                 <select
                     name="role"
                     onChange={handleChange}
                     value={form.role}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 p-2 rounded"
                 >
                     <option value="CLIENT">Client</option>
                     <option value="COMPANY">Company</option>
@@ -119,7 +119,7 @@ export default function RegistrationPage() {
                     placeholder="Name"
                     onChange={handleChange}
                     value={form.name}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 p-2 rounded"
                     required
                 />
 
@@ -129,7 +129,7 @@ export default function RegistrationPage() {
                         placeholder="Surname"
                         onChange={handleChange}
                         value={form.surname}
-                        className="w-full border p-2 rounded"
+                        className="w-full border border-gray-300 p-2 rounded"
                         required
                     />
                 )}
@@ -140,7 +140,7 @@ export default function RegistrationPage() {
                     placeholder="Email"
                     onChange={handleChange}
                     value={form.email}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 p-2 rounded"
                     required
                 />
                 <input
@@ -149,7 +149,7 @@ export default function RegistrationPage() {
                     placeholder="Password"
                     onChange={handleChange}
                     value={form.password}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 p-2 rounded"
                     required
                     minLength={6}
                 />
@@ -158,21 +158,21 @@ export default function RegistrationPage() {
                     placeholder="Phone Number"
                     onChange={handleChange}
                     value={form.phoneNumber}
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 p-2 rounded"
                     required
                 />
 
                 {form.role === "CLIENT" && form.residenceRequest && (
                     <>
                         <hr />
-                        <h3 className="text-lg font-semibold">Residence Info</h3>
+                        <h3 className="text-lg text-gray-700 font-semibold">Residence Info</h3>
 
                         <input
                             name="residence_streetAddress"
                             placeholder="Street Address"
                             onChange={handleChange}
                             value={form.residenceRequest.streetAddress}
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 p-2 rounded"
                             required
                         />
                         <input
@@ -180,14 +180,14 @@ export default function RegistrationPage() {
                             placeholder="Flat Number (optional)"
                             onChange={handleChange}
                             value={form.residenceRequest.flatNumber}
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 p-2 rounded"
                         />
                         <input
                             name="residence_city"
                             placeholder="City"
                             onChange={handleChange}
                             value={form.residenceRequest.city}
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 p-2 rounded"
                             required
                         />
                         <input
@@ -195,7 +195,7 @@ export default function RegistrationPage() {
                             placeholder="Postal Code"
                             onChange={handleChange}
                             value={form.residenceRequest.postalCode}
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 p-2 rounded"
                             required
                         />
                         <input
@@ -203,14 +203,14 @@ export default function RegistrationPage() {
                             placeholder="Country"
                             onChange={handleChange}
                             value={form.residenceRequest.country}
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 p-2 rounded"
                             required
                         />
                         <select
                             name="residence_residenceType"
                             value={form.residenceRequest.residenceType}
                             onChange={handleChange}
-                            className="w-full border p-2 rounded"
+                            className="w-full border border-gray-300 p-2 rounded"
                         >
                             <option value="HOUSE">House</option>
                             <option value="FLAT">Flat</option>
@@ -220,7 +220,7 @@ export default function RegistrationPage() {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+                    className="w-full bg-[#10b981] text-white font-semibold py-2 rounded hover:bg-[#059669] transition shadow-lg"
                 >
                     Register
                 </button>

@@ -8,30 +8,19 @@ import {
     Typography,
     TextField,
     Button,
+    Paper,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoginFormInputs } from './types';
 import { validationSchema } from './validation';
-import {
-    MainBoxStyles,
-    ButtonStyles,
-    ErrorFieldStyles,
-    ContainerStyles,
-} from './styles';
 import { useAuthentication } from '@/hooks/useAuthentication';
-import { useErrorHandler } from '@/hooks/useErrorHandler';
-import LoadingProgress from '@/components/LoadingProgress/LoadingProgress';
-import { BackgroundBox } from '@/components/BackgroundBox/BackgroundBox';
-import {HOME_PATH, MAIN_PAGE, REGISTER_PATH} from '@/utils/routes';
-import Link from 'next/link';
 
 const LoginPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { login } = useAuthentication();
-    const { error, handleError, clearError } = useErrorHandler();
 
     const {
         register,
@@ -45,83 +34,73 @@ const LoginPage: React.FC = () => {
         setLoading(true);
         try {
             const success = await login(data);
-            if (success) router.push(MAIN_PAGE);
-        } catch (err: unknown) {
-            handleError(err);
-            setTimeout(() => {
-                clearError();
-            }, 4000);
+            if (success) router.push('/main');
+        } catch (err) {
+            console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <Container maxWidth="md" sx={ContainerStyles}>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                backgroundImage: 'linear-gradient(to top right, #bbf7d0, #67e8f9, #fef08a)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
             <CssBaseline />
-            <Box sx={MainBoxStyles}>
-                <Typography variant="h4" textAlign="center" fontSize="40px">
-                    Welcome to BillUp
-                </Typography>
-                <Typography variant="body2" textAlign="center" sx={{ mb: 2}}>
-                    A simplified central bill paying applications, no need to go thru different applications
-                </Typography>
-                <Typography component="p" textAlign="center" sx={{ mb: 2 }}>
-                    Sign in with your email address
+            <Paper
+                elevation={6}
+                sx={{
+                    padding: 4,
+                    borderRadius: 3,
+                    backgroundColor: '#fff',
+                    width: '100%',
+                    maxWidth: 400,
+                }}
+            >
+                <Typography variant="h5" fontWeight="bold" textAlign="center" mb={3}>
+                    Sign In
                 </Typography>
 
-                <Box component="form" onSubmit={handleSubmit(handleLogin)} sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={handleSubmit(handleLogin)} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <TextField
+                        label="Email"
                         fullWidth
-                        label="Email Address"
-                        placeholder="e.g., name@marsterpiece.com"
-                        margin="normal"
                         {...register('email')}
                         error={!!errors.email}
                         helperText={errors.email?.message}
                     />
-
                     <TextField
-                        fullWidth
                         label="Password"
                         type="password"
-                        margin="normal"
+                        fullWidth
                         {...register('password')}
                         error={!!errors.password}
                         helperText={errors.password?.message}
                     />
-
-                    {error && <Typography sx={ErrorFieldStyles}>{error}</Typography>}
-
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 2 }}>
-                        <Typography variant="body2">Dont have an account?</Typography>
-                        <Link href={REGISTER_PATH} style={{ color: 'gray', textDecoration: 'underline' }}>
-                            Register
-                        </Link>
-                    </Box>
-
                     <Button
                         type="submit"
-                        disabled={loading}
-                        fullWidth
                         variant="contained"
-                        sx={ButtonStyles}
+                        fullWidth
+                        sx={{
+                            backgroundColor: '#10b981', // green
+                            textTransform: 'none',
+                            fontWeight: 'bold',
+                            '&:hover': {
+                                backgroundColor: '#059669',
+                            },
+                        }}
                     >
-                        {loading ? (
-                            <LoadingProgress
-                                text="Signing In..."
-                                spinnerColor="#A8A8A8"
-                                size="20px"
-                                fontSize="14px"
-                            />
-                        ) : (
-                            'Sign In'
-                        )}
+                        {loading ? 'Signing In...' : 'Sign In'}
                     </Button>
                 </Box>
-            </Box>
-            <BackgroundBox />
-        </Container>
+            </Paper>
+        </Box>
     );
 };
 

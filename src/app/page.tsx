@@ -1,27 +1,30 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-        <div className="bg-white rounded-xl shadow-xl p-10 flex flex-col items-center gap-8 w-full max-w-md">
-          <h1 className="text-3xl font-bold">Welcome to BillUp!</h1>
-          <p className="text-gray-700 text-center">
-            Pay all your bills in one place.<br />
-            Sign in or create an account to get started.
-          </p>
-          <div className="flex gap-4 w-full">
+      <div className="min-h-screen overflow-hidden bg-gradient-to-r from-green-200 to-cyan-200 flex flex-col">
+        <div className="flex-grow flex items-center justify-center px-4">
+          <div className="text-center w-full max-w-4xl mx-auto">
+            <h1 className="text-gray-800 text-7xl font-bold mb-6">
+              Welcome to BillUp
+            </h1>
+            <p className="text-gray-700 text-4xl mb-10 leading-relaxed">
+              Pay all your bills in one place!<br />
+            </p>
+
             <Link
                 href="/login"
-                className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-center hover:bg-blue-700 transition"
+                className="block mx-auto w-60 bg-white text-gray-800 font-semibold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition mb-6 text-xl"
             >
-              Login
+              Log in
             </Link>
-            <Link
-                href="/registration"
-                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg text-center hover:bg-gray-300 transition"
-            >
-              Register
-            </Link>
+
+            <p className="text-gray-700 text-lg">
+              <Link href="/registration" className="underline hover:text-gray-900">
+                Don’t have an account?
+              </Link>
+            </p>
           </div>
         </div>
       </div>
