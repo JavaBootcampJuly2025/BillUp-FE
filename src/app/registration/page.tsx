@@ -60,28 +60,41 @@ export default function RegistrationPage() {
 
             if (key === "streetAddress") {
                 const match = mockAddresses.find((addr) => addr.full === value);
+
                 setForm((prev) => {
-                    const residence = prev.residenceRequest || {
-                        streetAddress: "",
-                        flatNumber: "",
-                        city: "",
-                        postalCode: "",
-                        country: "",
-                        residenceType: "HOUSE",
-                        isPrimary: true,
-                    };
+                    const prevResidence = prev.residenceRequest!;
+
+                    if (match) {
+                        return {
+                            ...prev,
+                            residenceRequest: {
+                                ...prevResidence,
+                                streetAddress: value,
+                                city: match.city,
+                                postalCode: match.postalCode,
+                                country: match.country,
+                            },
+                        };
+                    }
 
                     return {
                         ...prev,
                         residenceRequest: {
-                            ...residence,
+                            ...prevResidence,
                             streetAddress: value,
-                            city: match?.city || residence.city,
-                            postalCode: match?.postalCode || residence.postalCode,
-                            country: match?.country || residence.country,
                         },
                     };
                 });
+
+                return;
+            } else {
+                setForm((prev) => ({
+                    ...prev,
+                    residenceRequest: {
+                        ...prev.residenceRequest!,
+                        [key]: value,
+                    },
+                }));
                 return;
             }
 
