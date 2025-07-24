@@ -5,9 +5,9 @@ import { useContext } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { InvoiceForm } from "@/app/Invoice/types";
+import { InvoiceForm } from "@/app/invoice/types";
 import { billApi } from '@/services/billApi';
-import { invoiceValidationSchema } from "@/app/Invoice/validation";
+import { invoiceValidationSchema } from "@/app/invoice/validation";
 import { CreateBillRequest, BillType } from '@/types/bill';
 import { AuthContext } from "@/context/AuthContext";
 import { AuthContextType } from "@/context/types";
@@ -66,8 +66,8 @@ export default function InvoicePage() {
 
   return (
     <>
-    {isLoggedIn() && userRoles?.includes(ROLE_COMPANY) ? (
-    <div className="flex justify-center items-start min-h-screen bg-gradient-to-r from-purple-500 to-cyan-400 py-10 overflow-y-auto">
+
+    <div className="flex justify-center items-start min-h-screen bg-gradient-to-r from-[#fef08a] to-[#f9a8d4] py-10 overflow-y-auto">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md space-y-4"
@@ -113,13 +113,12 @@ export default function InvoicePage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded transition cursor-pointer"
+          className="w-full bg-[#10b981] text-white font-semibold py-2 rounded hover:bg-[#059669] shadow-lg transition cursor-pointer"
         >
          {loading ? 'Sending Bill...' : 'Send'}
         </button>
       </form>
     </div>
-    ) :'' }
     </>
   );
 

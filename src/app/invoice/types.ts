@@ -1,3 +1,5 @@
+import {BillType} from "@/types/bill";
+
 export interface InvoiceForm {
   name: string;
   amount: number;

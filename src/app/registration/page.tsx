@@ -7,16 +7,16 @@ import { RegistrationForm, ResidenceRequest } from "@/app/registration/types";
 
 const mockAddresses = [
     {
-        full: "221B Baker Street, London",
-        city: "London",
-        postalCode: "NW1 6XE",
-        country: "UK",
+        full: "Gedimino pr. 9",
+        city: "Vilnius",
+        postalCode: "LT-01103",
+        country: "Lithuania",
     },
     {
-        full: "1600 Amphitheatre Parkway, Mountain View",
-        city: "Mountain View",
-        postalCode: "94043",
-        country: "USA",
+        full: "Antakalnio g. 12",
+        city: "Vilnius",
+        postalCode: "LT-10232",
+        country: "Lithuania",
     },
     {
         full: "10 Downing Street, London",

@@ -38,17 +38,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const setAuthData = (token: string) => {
         if (validateToken(token)) {
-            const userInfo: ParsedJWTType = jwtDecode<ParsedJWTType>(token);
-            if (userInfo && userInfo.userId && userInfo.roles) {
-                setAccessToken(token);
-                setUserID(userInfo.userId);
-                setUserRoles(userInfo.roles);
+            try {
+                const userInfo: ParsedJWTType = jwtDecode<ParsedJWTType>(token);
+                if (userInfo && userInfo.userId && userInfo.roles) {
+                    setAccessToken(token);
+                    setUserID(userInfo.userId);
+                    const rolesArr = Array.isArray(userInfo.roles) ? userInfo.roles : [userInfo.roles];
+                    setUserRoles(rolesArr);
 
-                localStorage.setItem("accessToken", token);
-                localStorage.setItem("userId", userInfo.userId.toString());
-                localStorage.setItem("roles", JSON.stringify(userInfo.roles));
-            } else {
-                console.error("Failed to decode token.");
+                    localStorage.setItem("accessToken", token);
+                    localStorage.setItem("userId", userInfo.userId.toString());
+                    localStorage.setItem("roles", JSON.stringify(rolesArr));
+                } else {
+                    console.error("Failed to decode token.");
+                    navigate(LOGIN_PATH);
+                }
+            } catch (error) {
+                console.error("Token decoding error:", error);
                 navigate(LOGIN_PATH);
             }
         } else {
@@ -57,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             navigate(LOGIN_PATH);
         }
     };
+
 
     const validateJwtToken = async (): Promise<boolean> => {
         return accessToken ? validateToken(accessToken) : false;
@@ -80,16 +87,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return (
         <AuthContext.Provider
             value={{
-            isLoggedIn,
-            accessToken,
-            setAccessToken,
-            setAuthData,
-            userID,
-            userRoles,
-            validateJwtToken,
-    }}
->
-    {children}
-    </AuthContext.Provider>
-);
+                isLoggedIn,
+                accessToken,
+                setAccessToken,
+                setAuthData,
+                userID,
+                userRoles,
+                validateJwtToken,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };

@@ -17,6 +17,7 @@ import {
     LOGIN_PATH,
     PROFILE_PAGE,
     PAYMENT_PAGE,
+    INVOICE_PAGE,
     BILLS_PAGE,
     RESIDENCIES_PAGE,
     HISTORY_PAGE,
@@ -73,10 +74,10 @@ export default function Navbar() {
                     <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
                         {isLoggedIn() && userRoles?.includes(ROLE_CLIENT) && (
                             <>
-                                <Button disabled={isLoggedIn() && userRoles?.includes(ROLE_COMPANY)} component={Link} href={BILLS_PAGE} sx={LinkStyles}>
+                                <Button component={Link} href={BILLS_PAGE} sx={LinkStyles}>
                                     Bills
                                 </Button>
-                                <Button disabled={isLoggedIn() && userRoles?.includes(ROLE_COMPANY)} component={Link} href={RESIDENCIES_PAGE} sx={LinkStyles}>
+                                <Button component={Link} href={RESIDENCIES_PAGE} sx={LinkStyles}>
                                     Residencies
                                 </Button>
                             </>
@@ -90,6 +91,13 @@ export default function Navbar() {
                             <>
                                 <Button disabled={isLoggedIn() && userRoles?.includes(ROLE_COMPANY)} component={Link} href={PROFILE_PAGE} sx={LinkStyles}>
                                     Profile
+                                </Button>
+                            </>
+                        )}
+                        {isLoggedIn() && userRoles?.includes(ROLE_COMPANY) && (
+                            <>
+                                <Button component={Link} href={INVOICE_PAGE} sx={LinkStyles}>
+                                    Invoice
                                 </Button>
                             </>
                         )}
