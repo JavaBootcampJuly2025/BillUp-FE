@@ -33,7 +33,7 @@ export default function InvoicePage() {
       name: "",
       type: "",
       dueDate: "",
-      amount: 0,
+      amount: 0.05,
       residenceId: 0,
       companyId: 0
     },
@@ -77,7 +77,7 @@ export default function InvoicePage() {
             {error && <div className="text-red-500">{error}</div>}
             {success && <div className="text-green-600">{success}</div>}
 
-            <label className="text-gray-700">Company Name</label>
+            <label className="text-gray-700">Name</label>
             <input {...register("name")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
             <p className="text-red-500 text-sm">{errors.name?.message}</p>
 
@@ -99,7 +99,14 @@ export default function InvoicePage() {
             <p className="text-red-500 text-sm">{errors.dueDate?.message}</p>
 
             <label className="text-gray-700">Amount</label>
-            <input {...register("amount",  { valueAsNumber: true })}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+            <input {...register("amount", { valueAsNumber: true })}
+                   type="text"
+                   inputMode="decimal"
+                   onInput={(e) => {
+                     const input = e.target as HTMLInputElement;
+                     input.value = input.value.replace(/[^0-9.]/g, '');
+                   }}
+                   className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
             <p className="text-red-500 text-sm">{errors.amount?.message}</p>
 
             <label className="text-gray-700">Residence ID</label>

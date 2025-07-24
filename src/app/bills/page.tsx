@@ -115,7 +115,7 @@ export default function UserBillsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-orange-600 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-purple-400 flex items-center justify-center">
                 <div className="text-xl text-black">Loading bills...</div>
             </div>
         );
@@ -123,7 +123,7 @@ export default function UserBillsPage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-orange-600 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-purple-400 flex items-center justify-center">
                 <div className="text-xl text-red-600">Error: {error}</div>
             </div>
         );

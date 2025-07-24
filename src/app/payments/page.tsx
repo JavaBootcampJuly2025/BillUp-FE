@@ -1,22 +1,19 @@
-// pages/payment/page.tsx
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import GradientLayout from '../../components/GradientLayout';
-import { TextField, Button, Paper, Typography } from '@mui/material';
+import { TextField, Button, Paper, Typography, Box } from '@mui/material';
 import { loginAndStoreToken } from '@/utils/AuthUtils';
 import { billApi } from '@/services/billApi';
 import { PAYMENT_ENDPOINT } from '@/utils/apiConstants';
 import { Bill } from '@/types/bill';
 import axios from 'axios';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 export default function PaymentPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const billId = searchParams.get('billId');
-
 
     const [bill, setBill] = useState<Bill | null>(null);
     const [email, setEmail] = useState('');
@@ -46,7 +43,6 @@ export default function PaymentPage() {
         setLoading(true);
         try {
             const token = await loginAndStoreToken(email, password);
-
             const decoded = jwtDecode<{ userId: number }>(token);
             const userId = decoded.userId;
 
@@ -77,20 +73,46 @@ export default function PaymentPage() {
     };
 
     return (
-        <GradientLayout>
-            <Paper elevation={3} className="p-8 w-full max-w-md">
-                <Typography variant="h5" className="mb-4 text-center">Confirm Payment</Typography>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                background: 'linear-gradient(to bottom right, #fde68a, #c084fc)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                p: 4,
+            }}
+        >
+        <Paper
+                elevation={4}
+                sx={{
+                    width: '100%',
+                    maxWidth: 480,
+                    p: 4,
+                    borderRadius: 3,
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    backdropFilter: 'blur(6px)',
+                    WebkitBackdropFilter: 'blur(6px)',
+                }}
+            >
+                <Typography variant="h5" sx={{ mb: 3, textAlign: 'center' }}>
+                    Confirm Payment
+                </Typography>
+
                 {bill ? (
-                    <Typography variant="h6" className="mb-6 text-center">
+                    <Typography variant="h6" sx={{ mb: 4, textAlign: 'center' }}>
                         You need to pay: <strong>${bill.amount.toFixed(2)}</strong>
                     </Typography>
                 ) : (
-                    <Typography className="mb-6 text-center text-gray-500">Loading bill details...</Typography>
+                    <Typography sx={{ mb: 4, textAlign: 'center', color: 'gray' }}>
+                        Loading bill details...
+                    </Typography>
                 )}
+
                 <TextField
                     label="Email"
                     fullWidth
-                    className="mb-4"
+                    sx={{ mb: 3 }}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -98,28 +120,47 @@ export default function PaymentPage() {
                     label="Password"
                     type="password"
                     fullWidth
-                    className="mb-4"
+                    sx={{ mb: 3 }}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <TextField
                     label="Payment Token"
                     fullWidth
-                    className="mb-4"
+                    sx={{ mb: 3 }}
                     value={methodToken}
                     onChange={(e) => setMethodToken(e.target.value)}
                 />
                 <TextField
                     label="Provider"
                     fullWidth
-                    className="mb-6"
+                    sx={{ mb: 4 }}
                     value={provider}
                     onChange={(e) => setProvider(e.target.value)}
                 />
-                <Button variant="contained" fullWidth onClick={handlePay} disabled={loading}>
-                    {loading ? 'Processing...' : 'Pay Now'}
-                </Button>
-            </Paper>
-        </GradientLayout>
+
+            <Button
+                fullWidth
+                onClick={handlePay}
+                disabled={loading}
+                sx={{
+                    py: 1.5,
+                    fontWeight: 500,
+                    fontSize: '1rem',
+                    color: '#fff',
+                    backgroundColor: '#10b981',
+                    '&:hover': {
+                        backgroundColor: '#059669',
+                    },
+                    '&:disabled': {
+                        backgroundColor: '#a7f3d0',
+                        color: '#4b5563',
+                    },
+                }}
+            >
+                {loading ? 'Processing...' : 'Pay Now'}
+            </Button>
+        </Paper>
+        </Box>
     );
 }
