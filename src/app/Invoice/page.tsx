@@ -1,13 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useContext } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { InvoiceForm } from "@/app/Invoice/types";
+import { billApi } from '@/services/billApi';
 import { invoiceValidationSchema } from "@/app/Invoice/validation";
+import { CreateBillRequest, BillType } from '@/types/bill';
+import { AuthContext } from "@/context/AuthContext";
+import { AuthContextType } from "@/context/types";
 
 export default function InvoicePage() {
+
+  const { isLoggedIn, userRoles } = useContext(AuthContext) as AuthContextType;
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -21,30 +29,29 @@ export default function InvoicePage() {
   } = useForm<InvoiceForm>({
     resolver: yupResolver(invoiceValidationSchema),
     defaultValues: {
-      companyName: "",
-      utility: "ELECTRICITY",
-      month: "",
+      name: "",
+      type: "",
       dueDate: "",
-      value: "",
-      role: "COMPANY",
-      residence: {
-        streetAddress: "",
-        flatNumber: "",
-        city: "",
-        postalCode: "",
-        country: "",
-      }
+      amount: 0,
+      residenceId: 0,
+      companyId: 0
     },
   });
 
   const onSubmit = async (data: InvoiceForm) => {
-    try {
-      const res = await fetch("http://localhost:8080/api/invoices/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
 
+    setLoading(true);
+    try {
+     const billData: CreateBillRequest = {
+        name: data.name,
+        amount: Number(data?.amount),
+        dueDate: data?.dueDate,
+        type: data?.type,
+        residenceId: Number(data?.residenceId),
+        companyId: Number(data?.companyId)
+      };
+
+      await billApi.createBill(billData);
       if (!res.ok) throw new Error("Failed to send invoice");
       setSuccess("Invoice sent successfully!");
       setError("");
@@ -52,10 +59,15 @@ export default function InvoicePage() {
     } catch (err) {
       setError("Failed to send invoice");
       setSuccess("");
+    } finally {
+        setLoading(false);
     }
   };
 
+
   return (
+    <>
+    {isLoggedIn() && userRoles?.includes(ROLE_COMPANY) ? (
     <div className="flex justify-center items-start min-h-screen bg-gradient-to-r from-purple-500 to-cyan-400 py-10 overflow-y-auto">
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -67,58 +79,49 @@ export default function InvoicePage() {
         {success && <div className="text-green-600">{success}</div>}
 
         <label className="text-gray-700">Company Name</label>
-        <input {...register("companyName")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.companyName?.message}</p>
+        <input {...register("name")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+        <p className="text-red-500 text-sm">{errors.name?.message}</p>
 
         <label className="text-gray-700">Select Utility</label>
-        <select {...register("utility")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200">
-          <option value="ELECTRICITY">Electricity</option>
-          <option value="WATER">Water</option>
-          <option value="INTERNET">Internet</option>
+        <select {...register("type")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200">
+          <option value="">Select bill type</option>
+          <option value={BillType?.ELECTRICITY}>Electricity</option>
+          <option value={BillType?.COLD_WATER}>Cold Water</option>
+          <option value={BillType?.HOT_WATER}>Hot Water</option>
+          <option value={BillType?.GAS}>Gas</option>
+          <option value={BillType?.INTERNET}>Internet</option>
+          <option value={BillType?.HOUSE_SERVICE}>House Service</option>
         </select>
-        <p className="text-red-500 text-sm">{errors.utility?.message}</p>
 
-        <label className="text-gray-700">Month</label>
-        <input {...register("month")} placeholder="eg.10.25" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.month?.message}</p>
+        <p className="text-red-500 text-sm">{errors.type?.message}</p>
 
         <label className="text-gray-700">Due Date</label>
         <input type="date" {...register("dueDate")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200 cursor-pointer" />
         <p className="text-red-500 text-sm">{errors.dueDate?.message}</p>
 
-        <label className="text-gray-700">Value</label>
-        <input {...register("value")}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.value?.message}</p>
+        <label className="text-gray-700">Amount</label>
+        <input {...register("amount")}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+        <p className="text-red-500 text-sm">{errors.amount?.message}</p>
 
-        <h3 className="text-lg font-semibold">Residence</h3>
+        <label className="text-gray-700">Residence ID</label>
+        <input {...register("residenceId")}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+        <p className="text-red-500 text-sm">{errors.residenceId?.message}</p>
 
-        <label className="text-gray-700">Street Address</label>
-        <input {...register("residence.streetAddress")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.residence?.streetAddress?.message}</p>
-
-        <label className="text-gray-700">Flat Number</label>
-        <input {...register("residence.flatNumber")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.residence?.flatNumber?.message}</p>
-
-        <label className="text-gray-700">City</label>
-        <input {...register("residence.city")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.residence?.city?.message}</p>
-
-        <label className="text-gray-700">Postal Code</label>
-        <input {...register("residence.postalCode")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.residence?.postalCode?.message}</p>
-
-        <label className="text-gray-700">Country</label>
-        <input {...register("residence.country")} className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200"/>
-        <p className="text-red-500 text-sm">{errors.residence?.country?.message}</p>
+        <label className="text-gray-700">Company ID</label>
+        <input {...register("companyId")}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
+        <p className="text-red-500 text-sm">{errors.companyId?.message}</p>
 
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded transition cursor-pointer"
         >
-          Send
+         {loading ? 'Sending Bill...' : 'Send'}
         </button>
       </form>
     </div>
+    ) :'' }
+    </>
   );
+
 }

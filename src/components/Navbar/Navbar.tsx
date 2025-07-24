@@ -71,10 +71,10 @@ export default function Navbar() {
                     <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
                         {isLoggedIn() && userRoles?.includes(ROLE_CLIENT) && (
                             <>
-                                <Button component={Link} href={BILLS_PAGE} sx={LinkStyles}>
+                                <Button disabled={isLoggedIn() && userRoles?.includes(ROLE_COMPANY)} component={Link} href={BILLS_PAGE} sx={LinkStyles}>
                                     Bills
                                 </Button>
-                                <Button component={Link} href={RESIDENCIES_PAGE} sx={LinkStyles}>
+                                <Button disabled={isLoggedIn() && userRoles?.includes(ROLE_COMPANY)} component={Link} href={RESIDENCIES_PAGE} sx={LinkStyles}>
                                     Residencies
                                 </Button>
                             </>
@@ -86,7 +86,7 @@ export default function Navbar() {
                         )}
                         {isLoggedIn() && (
                             <>
-                                <Button component={Link} href={PROFILE_PAGE} sx={LinkStyles}>
+                                <Button disabled={isLoggedIn() && userRoles?.includes(ROLE_COMPANY)} component={Link} href={PROFILE_PAGE} sx={LinkStyles}>
                                     Profile
                                 </Button>
                             </>
