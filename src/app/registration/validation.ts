@@ -1,7 +1,6 @@
 import { ZodType, z } from 'zod';
 import { RegisterFormData } from './types';
 
-
 export const RegistrationSchema: ZodType<RegisterFormData> = z
     .object({
         name: z
@@ -16,27 +15,28 @@ export const RegistrationSchema: ZodType<RegisterFormData> = z
 
         residency: z
             .string()
-            .min(1, { message: 'Username is required.' })
-            .max(50, { message: 'Username cannot exceed 50 characters.' }),
+            .min(1, { message: 'Residency is required.' })
+            .max(50, { message: 'Residency cannot exceed 50 characters.' }),
 
         email: z
             .string()
             .min(1, { message: 'Email address is required.' })
-            .email({ message: 'Invalid email address.' }),
+            .regex(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, {
+                message: 'Invalid email address format.'
+            }),
 
         phoneNumber: z
             .string()
             .min(1, { message: 'Phone number is required.' })
             .max(15, { message: 'Phone number cannot exceed 15 characters.' })
-            .regex(/^\+?[0-9]{1,15}$/, {
-                message: 'Invalid phone number format. Must be a valid international number.'
+            .regex(/^\+[1-9]\d{8,14}$/, {
+                message:
+                    'Invalid phone number format. Must be in international E.164 format (e.g. +123456789).'
             }),
 
-        role: z.enum(
-            ['CLIENT', 'COMPANY'] as const,
-            { message: 'Role is required and must be either CLIENT or COMPANY.' }
-        ),
-
+        role: z.enum(['CLIENT', 'COMPANY'] as const, {
+            message: 'Role is required and must be either CLIENT or COMPANY.'
+        }),
 
         password: z
             .string()
@@ -55,15 +55,9 @@ export const RegistrationSchema: ZodType<RegisterFormData> = z
 
         repeatedPassword: z
             .string()
-            .min(8, { message: 'Password must be at least 8 characters long.' }),
-
+            .min(1, { message: 'Please confirm your password.' })
     })
-    .refine(
-        (values) => {
-            return values.password === values.repeatedPassword;
-        },
-        {
-            message: 'Passwords must match!',
-            path: ['repeatedPassword']
-        }
-    );
+    .refine((values) => values.password === values.repeatedPassword, {
+        message: 'Passwords must match!',
+        path: ['repeatedPassword']
+    });
