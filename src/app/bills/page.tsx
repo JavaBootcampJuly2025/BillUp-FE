@@ -115,174 +115,176 @@ export default function UserBillsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-xl">Loading bills...</div>
+            <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-orange-600 flex items-center justify-center">
+                <div className="text-xl text-black">Loading bills...</div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-orange-600 flex items-center justify-center">
                 <div className="text-xl text-red-600">Error: {error}</div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-purple-400 py-8">
             <div className="max-w-6xl mx-auto px-4">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-4">My Bills</h1>
+                <div className="bg-transparent rounded-xl shadow-lg p-6 transition-all duration-300">
+                    <div className="mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-4">My Bills</h1>
 
-                    {/* Filter buttons */}
-                    <div className="flex space-x-4 mb-6">
-                        {[
-                            { key: 'all', label: 'All Bills' },
-                            { key: 'open', label: 'Open' },
-                            { key: 'paid', label: 'Paid' },
-                            { key: 'overdue', label: 'Overdue' }
-                        ].map(({ key, label }) => (
-                            <button
-                                key={key}
-                                onClick={() => setFilter(key as any)}
-                                className={`px-4 py-2 rounded-md text-sm font-medium ${
-                                    filter === key
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-white text-gray-700 hover:bg-gray-50'
-                                } border border-gray-300`}
-                            >
-                                {label}
-                            </button>
-                        ))}
+                        {/* Filter buttons */}
+                        <div className="flex space-x-4 mb-6">
+                            {[
+                                { key: 'all', label: 'All Bills' },
+                                { key: 'open', label: 'Open' },
+                                { key: 'paid', label: 'Paid' },
+                                { key: 'overdue', label: 'Overdue' }
+                            ].map(({ key, label }) => (
+                                <button
+                                    key={key}
+                                    onClick={() => setFilter(key as any)}
+                                    className={`px-4 py-2 rounded-md text-sm font-medium ${
+                                        filter === key
+                                            ? 'bg-cyan-500 text-white'
+                                            : 'bg-white text-gray-700 hover:bg-gray-50'
+                                    } border border-gray-300`}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Summary */}
+                        <div className="bg-white bg-opacity-80 rounded-lg shadow p-6 transition-all duration-300 mb-6">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="bg-white p-4 rounded-lg shadow">
+                                    <h3 className="text-sm font-medium text-gray-500">Total Bills</h3>
+                                    <p className="text-2xl font-bold text-gray-900">{bills.length}</p>
+                                </div>
+                                <div className="bg-white p-4 rounded-lg shadow">
+                                    <h3 className="text-sm font-medium text-gray-500">Open Bills</h3>
+                                    <p className="text-2xl font-bold text-yellow-600">
+                                        {bills.filter(b => b.status === BillStatus.OPEN).length}
+                                    </p>
+                                </div>
+                                <div className="bg-white p-4 rounded-lg shadow">
+                                    <h3 className="text-sm font-medium text-gray-500">Paid Bills</h3>
+                                    <p className="text-2xl font-bold text-green-600">
+                                        {bills.filter(b => b.status === BillStatus.PAID).length}
+                                    </p>
+                                </div>
+                                <div className="bg-white p-4 rounded-lg shadow">
+                                    <h3 className="text-sm font-medium text-gray-500">Total Outstanding</h3>
+                                    <p className="text-2xl font-bold text-red-600">
+                                        {formatCurrency(
+                                            bills
+                                                .filter(b => b.status === BillStatus.OPEN)
+                                                .reduce((sum, b) => sum + b.remainingAmount, 0)
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Summary */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <div className="bg-white p-4 rounded-lg shadow">
-                            <h3 className="text-sm font-medium text-gray-500">Total Bills</h3>
-                            <p className="text-2xl font-bold text-gray-900">{bills.length}</p>
-                        </div>
-                        <div className="bg-white p-4 rounded-lg shadow">
-                            <h3 className="text-sm font-medium text-gray-500">Open Bills</h3>
-                            <p className="text-2xl font-bold text-yellow-600">
-                                {bills.filter(b => b.status === BillStatus.OPEN).length}
-                            </p>
-                        </div>
-                        <div className="bg-white p-4 rounded-lg shadow">
-                            <h3 className="text-sm font-medium text-gray-500">Paid Bills</h3>
-                            <p className="text-2xl font-bold text-green-600">
-                                {bills.filter(b => b.status === BillStatus.PAID).length}
-                            </p>
-                        </div>
-                        <div className="bg-white p-4 rounded-lg shadow">
-                            <h3 className="text-sm font-medium text-gray-500">Total Outstanding</h3>
-                            <p className="text-2xl font-bold text-red-600">
-                                {formatCurrency(
-                                    bills
-                                        .filter(b => b.status === BillStatus.OPEN)
-                                        .reduce((sum, b) => sum + b.remainingAmount, 0)
-                                )}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bills list */}
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                    {filteredBills.length === 0 ? (
-                        <div className="p-8 text-center text-gray-500">
-                            No bills found for the selected filter.
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Bill Details
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Amount
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Due Date
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Priority
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Company
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Action
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                {filteredBills.map((bill) => (
-                                    <tr key={bill.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div>
-                                                <div className="text-sm font-medium text-gray-900">
-                                                    {bill.name}
-                                                </div>
-                                                <div className="text-sm text-gray-500">
-                                                    {getBillTypeLabel(bill.type)}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">
-                                                {formatCurrency(bill.amount)}
-                                            </div>
-                                            {bill.totalPaid > 0 && (
-                                                <div className="text-sm text-gray-500">
-                                                    Paid: {formatCurrency(bill.totalPaid)}
-                                                </div>
-                                            )}
-                                            {bill.remainingAmount > 0 && (
-                                                <div className="text-sm text-red-600">
-                                                    Remaining: {formatCurrency(bill.remainingAmount)}
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {formatDate(bill.dueDate)}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(bill.status)}`}>
-                          {bill.status}
-                        </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityBadgeClass(bill.priority)}`}>
-                          {bill.priority}
-                        </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {bill.companyName}
-                                        </td>
-
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <button
-                                                onClick={() => handlePayBill(bill.id)}
-                                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md text-sm transition-colors duration-200"
-                                                disabled={bill.status === BillStatus.PAID}
-                                            >
-                                                Pay
-                                            </button>
-                                        </td>
-
+                    {/* Bills list */}
+                    <div className="bg-white bg-opacity-80 rounded-lg shadow p-6 transition-all duration-300">
+                        {filteredBills.length === 0 ? (
+                            <div className="p-8 text-center text-gray-500">
+                                No bills found for the selected filter.
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Bill Details
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Amount
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Due Date
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Priority
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Company
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Action
+                                        </th>
                                     </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    {filteredBills.map((bill) => (
+                                        <tr key={bill.id} className="hover:bg-gray-50">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div>
+                                                    <div className="text-sm font-medium text-gray-900">
+                                                        {bill.name}
+                                                    </div>
+                                                    <div className="text-sm text-gray-500">
+                                                        {getBillTypeLabel(bill.type)}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">
+                                                    {formatCurrency(bill.amount)}
+                                                </div>
+                                                {bill.totalPaid > 0 && (
+                                                    <div className="text-sm text-gray-500">
+                                                        Paid: {formatCurrency(bill.totalPaid)}
+                                                    </div>
+                                                )}
+                                                {bill.remainingAmount > 0 && (
+                                                    <div className="text-sm text-red-600">
+                                                        Remaining: {formatCurrency(bill.remainingAmount)}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {formatDate(bill.dueDate)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(bill.status)}`}>
+                                                    {bill.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityBadgeClass(bill.priority)}`}>
+                                                    {bill.priority}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {bill.companyName}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <button
+                                                    onClick={() => handlePayBill(bill.id)}
+                                                    className="bg-[#10b981] hover:bg-[#059669] text-white font-medium py-2 px-4 rounded-md text-sm transition-colors duration-200"
+                                                    disabled={bill.status === BillStatus.PAID}
+                                                >
+                                                    Pay
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

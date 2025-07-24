@@ -61,95 +61,141 @@ export default function ResidencesPage() {
     const isSearching = query.trim().length > 0;
 
     return (
-        <Box sx={{ p: 4, bgcolor: "background.default", minHeight: "100vh" }}>
-            {/* Search Bar */}
-            <Box sx={{ mb: 4, display: "flex", gap: 1 }}>
-                <TextField
-                    fullWidth
-                    placeholder="Search residences..."
-                    value={query}
-                    onChange={e => setQuery(e.target.value)}
-                />
-                <IconButton onClick={() => {/* optional manual trigger */}}>
-                    <SearchIcon />
-                </IconButton>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                background: "linear-gradient(to bottom right, #bfdbfe, #bbf7d0)",
+                p: 4,
+                position: "relative",
+            }}
+        >
+            {/* Frosted Glass Container */}
+            <Box
+                sx={{
+                    maxWidth: "1200px",
+                    mx: "auto",
+                    bgcolor: "rgba(255, 255, 255, 0.3)",
+                    borderRadius: 4,
+                    boxShadow: 4,
+                    p: 4,
+                    backdropFilter: "blur(6px)",
+                    WebkitBackdropFilter: "blur(6px)",
+                    transition: "all 0.3s ease-in-out",
+                }}
+            >
+                {/* Search Bar */}
+                <Box sx={{ mb: 4, display: "flex", gap: 2 }}>
+                    <TextField
+                        fullWidth
+                        placeholder="Search residences..."
+                        value={query}
+                        onChange={e => setQuery(e.target.value)}
+                        variant="outlined"
+                    />
+                    <IconButton>
+                        <SearchIcon />
+                    </IconButton>
+                </Box>
+
+                {/* Results Grid */}
+                <Grid container spacing={4} justifyContent="center"
+                      sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                      }}
+                >
+                    {homes.map(r => (
+                        <Grid item xs={12} sm={6} md={4} key={r.id} sx={{display: "flex", justifyContent: "center"}}
+                            >
+                            <Card
+                                variant="outlined"
+                                sx={{
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    borderRadius: 4,
+                                    boxShadow: 2,
+                                }}
+                            >
+                                <CardHeader
+                                    avatar={
+                                        r.residencyType === "FLAT"
+                                            ? <ApartmentIcon color="action" />
+                                            : <HomeIcon color="action" />
+                                    }
+                                    action={
+                                        <Chip
+                                            label={r.primary ? "Primary" : "Secondary"}
+                                            color={r.primary ? "success" : "warning"}
+                                            size="small"
+                                        />
+                                    }
+                                    title={<Typography variant="h6">{r.fullAddress}</Typography>}
+                                    subheader={`${r.city}, ${r.postalCode}`}
+                                />
+                                <CardContent sx={{ flexGrow: 1 }}>
+                                    {!r.active && (
+                                        <Typography variant="body2" color="text.secondary">
+                                            (deactivated)
+                                        </Typography>
+                                    )}
+                                </CardContent>
+                                <CardActions>
+                                    {!r.primary && !isSearching && (
+                                        <Button
+                                            size="small"
+                                            onClick={() => onMakePrimary(r.id)}
+                                        >
+                                            Make Primary
+                                        </Button>
+                                    )}
+                                    {r.active ? (
+                                        <Button
+                                            size="small"
+                                            onClick={() => onDeactivate(r.id)}
+                                            color="warning"
+                                        >
+                                            Deactivate
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            size="small"
+                                            onClick={() => onActivate(r.id)}
+                                            color="success"
+                                        >
+                                            Activate
+                                        </Button>
+                                    )}
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
             </Box>
 
-            {/* Results Grid */}
-            <Grid container spacing={4}>
-                {homes.map(r => (
-                    // eslint-disable-next-line react/jsx-key
-                    <Grid container spacing={4}>
-                        <Card variant="outlined">
-                            <CardHeader
-                                avatar={
-                                    r.residencyType === "FLAT"
-                                        ? <ApartmentIcon color="action" />
-                                        : <HomeIcon color="action" />
-                                }
-                                action={
-                                    <Chip
-                                        label={r.primary ? "Primary" : "Secondary"}
-                                        color={r.primary ? "success" : "warning"}
-                                        size="small"
-                                    />
-                                }
-                                title={<Typography variant="h6">{r.fullAddress}</Typography>}
-                                subheader={`${r.city}, ${r.postalCode}`}
-                            />
-                            <CardContent>
-                                {!r.active && (
-                                    <Typography variant="body2" color="text.secondary">
-                                        (deactivated)
-                                    </Typography>
-                                )}
-                            </CardContent>
-                            <CardActions>
-                                {/* only show “Make Primary” when not already primary */}
-                                {!r.primary && !isSearching && (
-                                    <Typography
-                                        variant="button"
-                                        onClick={() => onMakePrimary(r.id)}
-                                        sx={{ cursor: "pointer", mr: 2 }}
-                                    >
-                                        Make Primary
-                                    </Typography>
-                                )}
-
-                                {/* toggle activate/deactivate */}
-                                {r.active ? (
-                                    <Typography
-                                        variant="button"
-                                        onClick={() => onDeactivate(r.id)}
-                                        sx={{ cursor: "pointer" }}
-                                    >
-                                        Deactivate
-                                    </Typography>
-                                ) : (
-                                    <Typography
-                                        variant="button"
-                                        onClick={() => onActivate(r.id)}
-                                        sx={{ cursor: "pointer" }}
-                                    >
-                                        Activate
-                                    </Typography>
-                                )}
-                            </CardActions>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
-
-            {/* Add‑new button */}
+            {/* Add‑new button in top-right */}
             <Fab
                 component={Link}
                 href="/residencies/create"
-                color="primary"
                 aria-label="add"
-                sx={{ position: "fixed", bottom: 24, right: 24 }}
+                sx={{
+                    position: "fixed",
+                    top: 120,
+                    right: 200,
+                    backgroundColor: "rgba(255, 255, 255, 0.6)",
+                    color: "#6b7280",
+                    backdropFilter: "blur(4px)",
+                    WebkitBackdropFilter: "blur(4px)",
+                    boxShadow: 3,
+                    "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    },
+                }}
             >
                 <AddIcon />
             </Fab>
         </Box>
     );
 }
+
+

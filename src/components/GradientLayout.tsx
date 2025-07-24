@@ -7,7 +7,7 @@ interface GradientLayoutProps {
 
 export default function GradientLayout({ children }: GradientLayoutProps) {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-blue-300 to-purple-400 flex items-center justify-center">
             {children}
         </div>
     );

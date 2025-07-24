@@ -24,6 +24,36 @@ const mockAddresses = [
         postalCode: "SW1A 2AA",
         country: "UK",
     },
+    {
+        full: "Brīvības iela 21",
+        city: "Riga",
+        postalCode: "LV-1010",
+        country: "Latvia",
+    },
+    {
+        full: "Khreshchatyk St, 22",
+        city: "Kyiv",
+        postalCode: "01001",
+        country: "Ukraine",
+    },
+    {
+        full: "Deribasivska St, 5",
+        city: "Odesa",
+        postalCode: "65000",
+        country: "Ukraine",
+    },
+    {
+        full: "Pärnu mnt 10",
+        city: "Tallinn",
+        postalCode: "10148",
+        country: "Estonia",
+    },
+    {
+        full: "Riia 2",
+        city: "Tartu",
+        postalCode: "51004",
+        country: "Estonia",
+    },
 ];
 
 export default function RegistrationPage() {
