@@ -10,6 +10,7 @@ import { billApi } from '@/services/billApi';
 import { PAYMENT_ENDPOINT } from '@/utils/apiConstants';
 import { Bill } from '@/types/bill';
 import axios from 'axios';
+import {jwtDecode} from "jwt-decode";
 
 export default function PaymentPage() {
     const router = useRouter();
@@ -45,10 +46,18 @@ export default function PaymentPage() {
         setLoading(true);
         try {
             const token = await loginAndStoreToken(email, password);
-            localStorage.setItem('accessToken', token);
+
+            const decoded = jwtDecode<{ userId: number }>(token);
+            const userId = decoded.userId;
+
+            if (!userId) {
+                alert("Invalid token: userId missing.");
+                return;
+            }
 
             await axios.post(PAYMENT_ENDPOINT, {
                 billId: bill?.id,
+                userId: userId,
                 amount: bill?.amount,
                 provider,
                 methodToken,
@@ -59,7 +68,7 @@ export default function PaymentPage() {
             });
 
             alert('Payment successful!');
-            router.push('/user/bills');
+            router.push('/bills');
         } catch (err: any) {
             alert('Payment failed: ' + (err.response?.data?.message || err.message));
         } finally {
