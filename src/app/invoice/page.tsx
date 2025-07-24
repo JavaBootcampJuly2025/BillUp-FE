@@ -120,10 +120,6 @@ export default function InvoicePage() {
                 />
         <p className="text-red-500 text-sm">{errors.residenceId?.message}</p>
 
-        <label className="text-gray-700">Company ID</label>
-        <input {...register("companyId", { valueAsNumber: true })}  type="number" className="w-full border focus:outline-none p-2 rounded bg-gray-100 border-gray-200" />
-        <p className="text-red-500 text-sm">{errors.companyId?.message}</p>
-
         <button
           type="submit"
           disabled={loading}
