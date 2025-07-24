@@ -7,7 +7,7 @@ import Navbar from "./Navbar/Navbar";
 
 export default function PageContent({ children }: { children: ReactNode }) {
     const auth = useContext(AuthContext);
-    if (!auth || !auth.hasHydrated) return null;
+    if (!auth) return null;
 
     return (
         <>
