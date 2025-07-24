@@ -6,4 +6,5 @@ export interface InvoiceForm {
   dueDate: string;
   type: BillType;
   residenceId: number;
+  companyId: number;
 }

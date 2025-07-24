@@ -6,4 +6,5 @@ export const invoiceValidationSchema = Yup.object().shape({
   dueDate: Yup.string().required('Due date is required'),
   amount: Yup.number().typeError('Amount must be a number').positive('Amount must be greater than 0').required('Amount is required'),
   residenceId: Yup.number().typeError('Resident ID must be a number').required('Resident ID is required'),
+  companyId: Yup.number().typeError('Company ID must be a number').required('Company ID is required'),
 });

@@ -69,7 +69,7 @@ export default function ResidencesPage() {
                 position: "relative",
             }}
         >
-            {/* Frosted Glass Container */}
+
             <Box
                 sx={{
                     maxWidth: "1200px",
@@ -173,7 +173,7 @@ export default function ResidencesPage() {
                 </Grid>
             </Box>
 
-            {/* Add‑new button in top-right */}
+
             <Fab
                 component={Link}
                 href="/residencies/create"
