@@ -119,7 +119,7 @@ export default function InvoicePage() {
         </button>
       </form>
     </div>
-    ) :'' }
+    ) : '' }
     </>
   );
 
